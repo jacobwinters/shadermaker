@@ -151,3 +151,37 @@ texture('lightness-substitute', [texture, texture], function(c){
   c('vec3 rest = `2(position);');
   c('return vec3(rest.xy, lightness);');
 });
+transform('swirl', [angle], function(c){
+  c("float angle = `1(length(position.xy));")
+  c("mat2 transform = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));");
+  c("return vec3(transform * position.xy, position.z);");
+});
+transform('sphere', [], function(c){ // Math taken from http://flam3.com/flame_draves.pdf (a good source of interesting transforms)
+  c("return vec3(position.xy * (length(position.xy) + 1.) / 2., position.z);");
+});
+// This function's output is as far from the center, by Euclidean distance, as the input was from the center in Manhattan distance
+// This sympy code verifies that it is correct:
+// from sympy.geometry import *
+//
+// def manhattanDistance(p1, p2):
+//     return abs(p1.x - p2.x) + abs(p1.y - p2.y)
+//
+// p = Point(x, y)
+// p2 = p * (abs(x) + abs(y)) / sqrt(x**2 + y**2)
+// simplify(Eq(p2.distance(Point(0, 0)), manhattanDistance(p, Point(0, 0))))
+transform('manhattan', [], function(c){
+  c("return vec3(normalize(position.xy) * (abs(position.x) + abs(position.y)), position.z);");
+});
+// Parameters: angle of wave, wave, phase of wave
+transform('waves', [angle, number, angle], function(c){
+  c("float angle = `1(position.z);");
+  c("vec2 unitVectorInDirection = vec2(cos(angle), sin(angle));");
+  c("float waveOffsetFromPosition = dot(unitVectorInDirection, position.xy);");
+  c("float waveOffset = waveOffsetFromPosition + `3(position.z);");
+  c("float offset = `2(waveOffset);");
+  c("vec2 orthogonalUnitVector = vec2(-sin(angle), cos(angle));");
+  c("return vec3(position.xy + orthogonalUnitVector * offset, position.z);");
+});
+transform('compose', [transform, transform], function(c){
+  c("return `2(`1(position));");
+});
