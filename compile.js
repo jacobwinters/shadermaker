@@ -10,7 +10,10 @@ function compile(node, type='texture', counter = makeCounter()){
     const ourId = counter();
     const ourName = 'node' + ourId;
     const names = [ourName].concat(children.map(x => 'node' + x[1]));
-    var code = nodeType.code;
+    var code = nodeKinds[type].returnType + " " + ourName + "(" + nodeKinds[type].parameters + ") {\n" +
+      "\t// " + type + " " + node[0] + "\n\t" +
+      nodeType.code.join("\n\t") +
+      "\n}";
     names.map((x, index) => [x, index]).reverse().forEach(([name, index]) => { // If not reversed `1 would be replaced before `11, and `11 matches `1
       code = code.replace('`' + index, name);
     });

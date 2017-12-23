@@ -8,6 +8,6 @@ function randomFromArray(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function randomFromObject(obj) {
-  return obj[randomFromArray(Object.keys(obj))];
+function randomKeyFromObject(obj) {
+  return randomFromArray(Object.keys(obj));
 }

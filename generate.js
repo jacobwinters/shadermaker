@@ -4,7 +4,7 @@ function generateNode(maxDepth, type='texture') {
   if(Math.random() * (maxDepth + 1) < 1) {
     return generateLeaf(type);
   } else {
-    return generateNodeOfType(maxDepth, randomFromObject(nodeTypes[type]));
+    return generateNodeOfType(maxDepth, type, randomKeyFromObject(nodeTypes[type]));
   }
 }
 
@@ -17,9 +17,9 @@ var depthPenalty = {
   texture: 2
 };
 
-function generateNodeOfType(maxDepth, nodeType) {
-  const params = nodeType.params.map(each => generateNode(maxDepth - depthPenalty[each], each));
-  return [nodeType.name].concat(params);
+function generateNodeOfType(maxDepth, nodeKind, nodeType) {
+  const params = nodeTypes[nodeKind][nodeType].params.map(each => generateNode(maxDepth - depthPenalty[each], each));
+  return [nodeType].concat(params);
 }
 
 function generateLeaf(type) {
@@ -29,12 +29,12 @@ function generateLeaf(type) {
     case 'angle':
       return Math.random() * 2 * Math.PI;
     case 'point':
-      return generateNodeOfType(0, randomFromArray([points.cartesian, points.polar]));
+      return generateNodeOfType(0, 'point', randomFromArray(['cartesian', 'polar']));
     case 'color':
-      return generateNodeOfType(0, colors['from-components']);
+      return generateNodeOfType(0, 'color', 'from-components');
     case 'transform':
-      return generateNodeOfType(0, randomFromArray([transforms.skew, transforms.rotate, transforms.scale, transforms.translate]));
+      return generateNodeOfType(0, 'transform', randomFromArray(['skew', 'rotate', 'scale', 'translate']));
     case 'texture':
-      return generateNodeOfType(0, textures.solid);
+      return generateNodeOfType(0, 'texture', 'solid');
   }
 }
