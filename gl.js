@@ -6,7 +6,7 @@ for(var i = 1; i <= 5; i++) {
   for(var j = 1; j <= 5; j++) {
     const xpos = (j - 3) / 2.5
     const ypos = (i - 3) / 2.5;
-    arrays.push(fullscreen.map(([x, y, x2, y2]) => [(x / 5) + xpos, (y / 5) + ypos, x2, y2]));
+    arrays.push(fullscreen.map(([x, y, x2, y2]) => [(x / 5) + xpos, (y / 5) + ypos, x2 * 2, y2 * 2]));
   }
 }
 
