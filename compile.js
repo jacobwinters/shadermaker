@@ -49,6 +49,12 @@ function compileToShader(node) {
   c('  }');
   c('  return vec3(mix(h1, h2, factor), mix(c1.yz, c2.yz, factor));');
   c('}');
+  c('float sinh(float x) {');
+  c('  return (exp(x) - exp(-x)) / 2.;');
+  c('}');
+  c('float cosh(float x) {');
+  c('  return (exp(x) + exp(-x)) / 2.;');
+  c('}');
 
   const [body, id] = compile(node);
   c(body);

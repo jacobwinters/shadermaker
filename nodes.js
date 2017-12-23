@@ -185,3 +185,14 @@ transform('waves', [angle, number, angle], function(c){
 transform('compose', [transform, transform], function(c){
   c("return `2(`1(position));");
 });
+transform('elliptic', [], function(c){
+  c("float x = cosh(position.x) * cos(position.y);");
+  c("float y = sinh(position.x) * sin(position.y);");
+  c("return vec3(x, y, position.z);");
+});
+transform('bipolar', [], function(c){
+  c("float denominator = cosh(position.x) - cos(position.y);");
+  c("float x = sinh(position.x) / denominator;");
+  c("float y = sin(position.y) / denominator;");
+  c("return vec3(x, y, position.z);");
+});
