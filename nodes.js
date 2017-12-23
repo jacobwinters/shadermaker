@@ -109,8 +109,8 @@ texture('checkerboard', [texture, texture, transform], function(c){
 // Parameters: texture1, texture2, angle of wave, wave, phase of wave
 texture('gradient', [texture, texture, angle, number, angle], function(c){
   c('float angle = `3(position.z);');
-  c('mat2 matrix = mat2(cos(angle), sin(angle), -sin(angle), cos(angle));');
-  c('float waveOffsetFromPosition = (matrix * position.xy).x;');
+  c('vec2 unitVectorInDirection = vec2(cos(angle), sin(angle));');
+  c('float waveOffsetFromPosition = dot(unitVectorInDirection, position.xy);');
   c('float waveOffset = waveOffsetFromPosition + `5(position.z);');
   c('float blend = `4(waveOffset);');
   c('return colormix(`1(position), `2(position), blend);');
