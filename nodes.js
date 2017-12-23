@@ -196,3 +196,6 @@ transform('bipolar', [], function(c){
   c("float y = sin(position.y) / denominator;");
   c("return vec3(x, y, position.z);");
 });
+transform('sphere-inverse', [], function(c){ // Math taken from http://flam3.com/flame_draves.pdf (a good source of interesting transforms)
+  c("return vec3(position.xy * 2. / (length(position.xy) + 1.), position.z);");
+});
