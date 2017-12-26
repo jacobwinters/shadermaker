@@ -104,6 +104,17 @@ const nodeTypes = {
 				"return vec3(position.xy + orthogonalUnitVector * offset, position.z);"
 			]
 		},
+		"waves-scale": {
+			params: ["angle", "number", "angle"],
+			code: ["float angle = `1(position.z);",
+				"vec2 unitVectorInDirection = vec2(cos(angle), sin(angle));",
+				"float waveOffsetFromPosition = dot(unitVectorInDirection, position.xy);",
+				"float waveOffset = waveOffsetFromPosition + `3(position.z);",
+				"float offset = `2(waveOffset);",
+				"vec2 vectorInDirection = unitVectorInDirection * waveOffsetFromPosition;",
+				"return vec3(vectorInDirection + (position.xy - vectorInDirection) * offset, position.z);"
+			]
+		},
 		"compose": {
 			params: ["transform", "transform"],
 			code: ["return `2(`1(position));"]
