@@ -35,6 +35,10 @@ const nodeKinds = {
 
 const nodeTypes = {
 	transform: {
+		"identity": {
+			params: [],
+			code: ["return position;"]
+		},
 		"skew": {
 			params: ["point"],
 			code: ["mat2 transform = mat2(1., `1(position.z), 1.);",

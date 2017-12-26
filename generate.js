@@ -33,7 +33,7 @@ function generateLeaf(type) {
     case 'color':
       return generateNodeOfType(0, 'color', 'from-components');
     case 'transform':
-      return generateNodeOfType(0, 'transform', randomFromArray(['skew', 'rotate', 'scale', 'translate']));
+      return generateNodeOfType(0, 'transform', 'identity');
     case 'texture':
       return generateNodeOfType(0, 'texture', 'solid');
   }
