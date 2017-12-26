@@ -79,7 +79,7 @@ const nodeTypes = {
 		// from sympy.geometry import *
 		//
 		// def manhattanDistance(p1, p2):
-		//     return abs(p1."x-p"2.x) + abs(p1."y-p"2.y)
+		//     return abs(p1.x - p2.x) + abs(p1.y - p2.y)
 		//
 		// p = Point(x, y)
 		// p2 = p * (abs(x) + abs(y)) / sqrt(x**2 + y**2)
