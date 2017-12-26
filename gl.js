@@ -1,36 +1,41 @@
 "use strict";
 
-var fullscreen = [[1, -1, 1, -1], [-1, -1, -1, -1], [1, 1, 1, 1], [-1, 1, -1, 1]];
-var arrays = [fullscreen];
-for(var i = 1; i <= 5; i++) {
-  for(var j = 1; j <= 5; j++) {
-    const xpos = (j - 3) / 2.5
-    const ypos = (i - 3) / 2.5;
-    arrays.push(fullscreen.map(([x, y, x2, y2]) => [(x / 5) + xpos, (y / 5) + ypos, x2 * 2, y2 * 2]));
+function initWebGL(canvas){
+  canvas.width = canvas.clientWidth * devicePixelRatio;
+  canvas.height = canvas.clientHeight * devicePixelRatio;
+  const gl = canvas.getContext('webgl');
+  function clear(){
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   }
+  return {
+    gl: gl,
+    clear: clear,
+    canvas: canvas
+  };
 }
 
-const positions = new Float32Array(flatten(arrays.map(flatten)));
-
-function initWebGL(canvas){
-canvas.width = canvas.clientWidth * devicePixelRatio;
-canvas.height = canvas.clientHeight * devicePixelRatio;
-  const gl = canvas.getContext('webgl');
-  const vshader = gl.createShader(gl.VERTEX_SHADER)
+function shaderCompiler(gl) {
+  const vshader = gl.createShader(gl.VERTEX_SHADER);
   gl.shaderSource(vshader,
     'precision highp float;\
-    attribute vec2 aScreenPosition;\
-    attribute vec2 aPosition;\
+    attribute vec2 position;\
+    uniform vec2 center;\
+    uniform vec2 size;\
+    uniform vec2 innerCenter;\
+    uniform vec2 innerSize;\
     varying vec2 coord;\
     void main(void){\
-      gl_Position = vec4(aScreenPosition, 1., 1.);\
-      coord = aPosition;\
+      gl_Position = vec4(center + size * position, 1., 1.);\
+      coord = innerCenter + innerSize * position;\
     }');
   gl.compileShader(vshader);
+  const positions = new Float32Array(flatten([[1, -1], [-1, -1], [1, 1], [-1, 1]]));
   const vertexPositionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-  function compileShader(code) {
+
+
+  return function compileShader(code) {
     const shaderProgram = gl.createProgram();
     const fshader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(fshader, code);
@@ -43,30 +48,25 @@ canvas.height = canvas.clientHeight * devicePixelRatio;
     gl.attachShader(shaderProgram, fshader);
     gl.deleteShader(fshader);
     gl.linkProgram(shaderProgram);
+    function draw(time, posX, posY, sizeX, sizeY, posXInner, posYInner, sizeXInner, sizeYInner) {
+      gl.useProgram(shaderProgram);
+      const positionAttrib = gl.getAttribLocation(shaderProgram, 'position');
+      gl.enableVertexAttribArray(positionAttrib);
+      gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0);
+      gl.uniform1f(gl.getUniformLocation(shaderProgram, 'time'), time);
+      gl.uniform2f(gl.getUniformLocation(shaderProgram, 'position'), posX, posY);
+      gl.uniform2f(gl.getUniformLocation(shaderProgram, 'center'), posX, posY);
+      gl.uniform2f(gl.getUniformLocation(shaderProgram, 'size'), sizeX, sizeY);
+      gl.uniform2f(gl.getUniformLocation(shaderProgram, 'innerCenter'), posXInner, posYInner);
+      gl.uniform2f(gl.getUniformLocation(shaderProgram, 'innerSize'), sizeXInner, sizeYInner);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+    function dispose(){
+      gl.deleteProgram(shaderProgram);
+    }
     return {
-      screenPositionAttrib: gl.getAttribLocation(shaderProgram, 'aScreenPosition'),
-      positionAttrib: gl.getAttribLocation(shaderProgram, 'aPosition'),
-      timeUniform: gl.getUniformLocation(shaderProgram, 'time'),
-      program: shaderProgram,
-      dispose: () => { gl.deleteProgram(shaderProgram); }
+      draw: draw,
+      dispose: dispose
     };
   }
-  function draw(program, time, position) {
-    gl.useProgram(program.program);
-    gl.enableVertexAttribArray(program.screenPositionAttrib);
-    gl.enableVertexAttribArray(program.positionAttrib);
-    gl.vertexAttribPointer(program.screenPositionAttrib, 2, gl.FLOAT, false, 16, 0);
-    gl.vertexAttribPointer(program.positionAttrib, 2, gl.FLOAT, false, 16, 8);
-    gl.uniform1f(program.timeUniform, time);
-    gl.drawArrays(gl.TRIANGLE_STRIP, position * 4, 4);
-  }
-  function clear(){
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  }
-  return {
-    compileShader: compileShader,
-    draw: draw,
-    clear: clear,
-    canvas: canvas
-  };
 }

@@ -1,7 +1,7 @@
 "use strict";
 
 function grid(shaders) {
-  return (gl, display) => {
+  return (gl, compiler, display) => {
     $(gl.canvas).click((event) => {
       const x = event.offsetX / gl.canvas.clientWidth;
       const y = 1 - (event.offsetY / gl.canvas.clientHeight);
@@ -11,7 +11,7 @@ function grid(shaders) {
     const compiledShaderPromises = shaders.map((shader) => new Promise((resolve) => shaderResolvers.push(resolve)));
     var currentShader = 0;
     function compileOneShader() {
-      shaderResolvers[currentShader](gl.compileShader(compileToShader(shaders[currentShader])));
+      shaderResolvers[currentShader](compiler(compileToShader(shaders[currentShader])));
       currentShader++;
       if(currentShader < 25) {
         setTimeout(compileOneShader);
@@ -24,7 +24,10 @@ function grid(shaders) {
       draw(time) {
         for(var i = 0; i < 25; i++) {
           if(compiledShaders[i]) {
-            gl.draw(compiledShaders[i], time, i + 1);
+            const posX = ((i % 5) - 2) * 2/5;
+            const posY = Math.floor((i / 5) - 2) * 2/5;
+            const size = 1 / 5;
+            compiledShaders[i].draw(time, posX, posY, size, size, 0, 0, 2, 2);
           }
         }
       },
@@ -36,11 +39,11 @@ function grid(shaders) {
 }
 
 function justOne(shader){
-  return (gl, display) => {
-    const compiledShader = gl.compileShader(compileToShader(shader));
+  return (gl, compiler, display) => {
+    const compiledShader = compiler(compileToShader(shader));
     return {
       draw(time) {
-        gl.draw(compiledShader, time, 0);
+        compiledShader.draw(time, 0, 0, 1, 1, 0, 0, 2, 2);
       },
       dispose() {
         compiledShader.dispose();
@@ -51,6 +54,7 @@ function justOne(shader){
 
 function makeDisplay(canvas) {
   const gl = initWebGL(canvas);
+  const compiler = shaderCompiler(gl.gl);
   var displayMaker;
   var display;
   var time = 0;
@@ -61,7 +65,7 @@ function makeDisplay(canvas) {
       }
       displayMaker = newDisplayMaker;
       $(canvas).off();
-      display = displayMaker(gl, me);
+      display = displayMaker(gl, compiler, me);
     },
     draw() {
       time += .01;
