@@ -148,13 +148,14 @@ const nodeTypes = {
 				"}"
 			]
 		},
-		// Parameters: texture1, texture2, angle of wave, wave, phase of wave
+		// Parameters: texture1, texture2, angle of wave, wave, phase of wave, transform used when testing point
 		"gradient": {
-			params: ["texture", "texture", "angle", "number", "angle"],
+			params: ["texture", "texture", "angle", "number", "angle", "transform"],
 			code: ["float angle = `3(position.z);",
 				"vec2 unitVectorInDirection = vec2(cos(angle), sin(angle));",
-				"float waveOffsetFromPosition = dot(unitVectorInDirection, position.xy);",
-				"float waveOffset = waveOffsetFromPosition + `5(position.z);",
+				"vec3 transformedPoint = `6(position);",
+				"float waveOffsetFromPosition = dot(unitVectorInDirection, transformedPoint.xy);",
+				"float waveOffset = waveOffsetFromPosition + transformedPoint.z;",
 				"float blend = `4(waveOffset);",
 				"return colormix(`1(position), `2(position), blend);"
 			]
