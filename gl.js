@@ -13,6 +13,8 @@ for(var i = 1; i <= 5; i++) {
 const positions = new Float32Array(flatten(arrays.map(flatten)));
 
 function initWebGL(canvas){
+canvas.width = canvas.clientWidth * devicePixelRatio;
+canvas.height = canvas.clientHeight * devicePixelRatio;
   const gl = canvas.getContext('webgl');
   const vshader = gl.createShader(gl.VERTEX_SHADER)
   gl.shaderSource(vshader,
