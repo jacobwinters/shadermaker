@@ -15,7 +15,7 @@ function compile(node, type='texture', counter = makeCounter()){
       nodeType.code.join("\n\t") +
       "\n}";
     names.map((x, index) => [x, index]).reverse().forEach(([name, index]) => { // If not reversed `1 would be replaced before `11, and `11 matches `1
-      code = code.replace('`' + index, name);
+      code = code.replace(RegExp('`' + index, 'g'), name);
     });
     const codeWithChildren = children.map(x => x[0]).concat([code]).join('\n');
     return [codeWithChildren, ourId];
