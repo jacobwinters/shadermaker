@@ -34,7 +34,6 @@ function shaderCompiler(gl) {
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
-
   return function compileShader(code) {
     const shaderProgram = gl.createProgram();
     const fshader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -48,12 +47,12 @@ function shaderCompiler(gl) {
     gl.attachShader(shaderProgram, fshader);
     gl.deleteShader(fshader);
     gl.linkProgram(shaderProgram);
-    function draw(time, posX, posY, sizeX, sizeY, posXInner, posYInner, sizeXInner, sizeYInner) {
+    function draw(setUniforms, posX, posY, sizeX, sizeY, posXInner, posYInner, sizeXInner, sizeYInner) {
       gl.useProgram(shaderProgram);
       const positionAttrib = gl.getAttribLocation(shaderProgram, 'position');
       gl.enableVertexAttribArray(positionAttrib);
       gl.vertexAttribPointer(positionAttrib, 2, gl.FLOAT, false, 0, 0);
-      gl.uniform1f(gl.getUniformLocation(shaderProgram, 'time'), time);
+      setUniforms(gl, shaderProgram);
       gl.uniform2f(gl.getUniformLocation(shaderProgram, 'position'), posX, posY);
       gl.uniform2f(gl.getUniformLocation(shaderProgram, 'center'), posX, posY);
       gl.uniform2f(gl.getUniformLocation(shaderProgram, 'size'), sizeX, sizeY);
@@ -67,6 +66,30 @@ function shaderCompiler(gl) {
     return {
       draw: draw,
       dispose: dispose
+    };
+  }
+}
+
+function nodeShaderCompiler(compileShader) {
+  return function compileNodeShader(node) {
+    var disposed = false;
+    const compiledShaderPromise = new Promise((resolve) => setTimeout(() => { if(!disposed) { resolve(compileShader(compileToShader(node))) } }));
+    var compiledShader;
+    compiledShaderPromise.then((compiledShader_) => compiledShader = compiledShader_);
+    function draw(time, posX, posY, sizeX, sizeY, posXInner, posYInner, sizeXInner, sizeYInner) {
+      function setTime(gl, shaderProgram){
+        gl.uniform1f(gl.getUniformLocation(shaderProgram, 'time'), time);
+      }
+      if(compiledShader) {
+        compiledShader.draw(setTime, posX, posY, sizeX, sizeY, posXInner, posYInner, sizeXInner, sizeYInner);
+      }
+    }
+    return {
+      draw: draw,
+      dispose: () => {
+        compiledShaderPromise.then((compiledShader) => compiledShader.dispose());
+        disposed = true;
+      }
     };
   }
 }
