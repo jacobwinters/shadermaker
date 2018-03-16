@@ -58,6 +58,9 @@ function compileToShader(node) {
   c('float cosh(float x) {');
   c('  return (exp(x) + exp(-x)) / 2.;');
   c('}');
+  c('float voronoiDistance(vec2 x) {');
+  c('  return min(min(length(x), distance(x, vec2(2., 2.))), min(distance(x, vec2(2., 0.)), distance(x, vec2(0., 2.))));');
+  c('}');
 
   const [body, id] = compile(node);
   c(body);

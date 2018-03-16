@@ -191,6 +191,29 @@ const nodeTypes = {
 				"vec3 rest = `2(position);",
 				"return vec3(rest.xy, lightness);"
 			]
+		},
+		"voronoi": {
+			params: ["transform", "point", "point", "point", "point", "texture", "texture", "texture", "texture"],
+			code: ["vec2 positionTransformed = mod(`1(position).xy, 2.);",
+				"vec2 p1 = mod(`1(vec3(`2(position.z), position.z)).xy - positionTransformed, 2.);",
+				"vec2 p2 = mod(`1(vec3(`3(position.z), position.z)).xy - positionTransformed, 2.);",
+				"vec2 p3 = mod(`1(vec3(`4(position.z), position.z)).xy - positionTransformed, 2.);",
+				"vec2 p4 = mod(`1(vec3(`5(position.z), position.z)).xy - positionTransformed, 2.);",
+				"float p1d = voronoiDistance(p1);",
+				"float p2d = voronoiDistance(p2);",
+				"float p3d = voronoiDistance(p3);",
+				"float p4d = voronoiDistance(p4);",
+				"float pn = min(min(p1d, p2d), min(p3d, p4d));",
+				"if (p1d == pn) {",
+				"	return `6(position);",
+				"} else if (p2d == pn) {",
+				"	return `7(position);",
+				"} else if(p3d == pn) {",
+				"	return `8(position);",
+				"} else {",
+				"	return `9(position);",
+				"}"
+			]
 		}
 	},
 	color: {
