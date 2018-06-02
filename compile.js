@@ -8,18 +8,14 @@ function compile(node, type='texture', counter = makeCounter()){
 		const nodeType = nodeTypes[type][node[0]];
 		const children = nodeType.params.map((childType, index) => compile(node[index + 1], childType, counter));
 		const ourId = counter();
-		const ourName = 'node' + ourId;
-		const names = [ourName].concat(children.map(x => 'node' + x[1]));
 
-		let code = `${nodeKinds[type].returnType} ${ourName}(${nodeKinds[type].parameters}) {
+		const code = `${nodeKinds[type].returnType} node${ourId}(${nodeKinds[type].parameters}) {
 	// ${type} ${node[0]}
 	${nodeType.code.join("\n\t")}
 }`;
 
-		names.map((x, index) => [x, index]).reverse().forEach(([name, index]) => { // If not reversed `1 would be replaced before `11, and `11 matches `1
-			code = code.replace(RegExp('`' + index, 'g'), name);
-		});
-		const codeWithChildren = children.map(x => x[0]).concat([code]).join('\n');
+		const codeWithChildrenCalls = code.replace(/`([0-9]+)/g, (_, number) => `node${children[Number(number) - 1][1]}`)
+		const codeWithChildren = children.map(x => x[0]).concat([codeWithChildrenCalls]).join('\n');
 		return [codeWithChildren, ourId];
 	}
 }
