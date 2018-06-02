@@ -1,8 +1,8 @@
 'use strict';
 
-function compile(node, type='texture', counter = makeCounter()){
+function compile(node, type = 'texture', counter = makeCounter()) {
 	const ourId = counter();
-	if(typeof node === 'number') {
+	if (typeof node === 'number') {
 		return {code: `float node${ourId}(float position){ return ${numberToGlslString(node)}; }`, id: ourId};
 	} else {
 		const nodeType = nodeTypes[type][node[0]];
@@ -13,8 +13,11 @@ function compile(node, type='texture', counter = makeCounter()){
 	${nodeType.code.join('\n\t')}
 }`;
 
-		const codeWithChildrenCalls = code.replace(/`([0-9]+)/g, (_, number) => `node${children[Number(number) - 1].id}`)
-		const codeWithChildren = children.map(child => child.code).concat([codeWithChildrenCalls]).join('\n');
+		const codeWithChildrenCalls = code.replace(/`([0-9]+)/g, (_, number) => `node${children[Number(number) - 1].id}`);
+		const codeWithChildren = children
+			.map((child) => child.code)
+			.concat([codeWithChildrenCalls])
+			.join('\n');
 		return {code: codeWithChildren, id: ourId};
 	}
 }
@@ -28,12 +31,12 @@ function makeCounter() {
 	let i = 1;
 	return function() {
 		return i++;
-	}
+	};
 }
 
 function compileToShader(node) {
 	const {code: body, id} = compile(node);
-  return `precision mediump float;
+	return `precision mediump float;
 varying vec2 coord;
 uniform float time;
 #define PI 3.1415926535897932384626433832795

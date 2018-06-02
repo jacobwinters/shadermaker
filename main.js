@@ -6,13 +6,13 @@ const settings = {
 	resolutionReduction: 1,
 	continuous: false,
 	zoom: 0,
-	center: {x: 0, y: 0}
-}
+	center: {x: 0, y: 0},
+};
 const display = makeDisplay(document.getElementById('canvas'));
 const initialShaders = [];
-for(let y = 0; y < 5; y++) {
+for (let y = 0; y < 5; y++) {
 	const row = [];
-	for(let x = 0; x < 5; x++) {
+	for (let x = 0; x < 5; x++) {
 		row.push(generateNode(5));
 	}
 	initialShaders.push(row);
@@ -24,6 +24,6 @@ function draw() {
 }
 new Vue({
 	el: '#controls',
-	data: settings
+	data: settings,
 });
 draw();

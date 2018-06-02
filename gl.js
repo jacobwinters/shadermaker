@@ -1,6 +1,6 @@
 'use strict';
 
-function initWebGL(canvas){
+function initWebGL(canvas) {
 	const gl = canvas.getContext('webgl');
 	let oldWidth, oldHeight, oldResolutionReduction, oldBufferWidth, oldBufferHeight;
 	function startFrame() {
@@ -18,7 +18,7 @@ function initWebGL(canvas){
 	return {
 		gl: gl,
 		startFrame: startFrame,
-		canvas: canvas
+		canvas: canvas,
 	};
 }
 
@@ -34,7 +34,7 @@ varying vec2 coord;
 void main(void){
 	gl_Position = vec4(center + size * position, 1., 1.);
 	coord = innerCenter + innerSize * position;
-}`
+}`;
 	gl.shaderSource(vshader, vshaderSource);
 
 	gl.compileShader(vshader);
@@ -48,7 +48,7 @@ void main(void){
 		const fshader = gl.createShader(gl.FRAGMENT_SHADER);
 		gl.shaderSource(fshader, code);
 		gl.compileShader(fshader);
-		if(!gl.getShaderParameter(fshader, gl.COMPILE_STATUS)){
+		if (!gl.getShaderParameter(fshader, gl.COMPILE_STATUS)) {
 			alert('Fragment shader error');
 			console.log(gl.getShaderInfoLog(fshader), code);
 		}
@@ -69,27 +69,33 @@ void main(void){
 			gl.uniform2f(gl.getUniformLocation(shaderProgram, 'innerSize'), sizeXInner, sizeYInner);
 			gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 		}
-		function dispose(){
+		function dispose() {
 			gl.deleteProgram(shaderProgram);
 		}
 		return {
 			draw: draw,
-			dispose: dispose
+			dispose: dispose,
 		};
-	}
+	};
 }
 
 function nodeShaderCompiler(compileShader) {
 	return function compileNodeShader(node) {
 		let disposed = false;
-		const compiledShaderPromise = new Promise((resolve) => setTimeout(() => { if(!disposed) { resolve(compileShader(compileToShader(node))) } }));
+		const compiledShaderPromise = new Promise((resolve) =>
+			setTimeout(() => {
+				if (!disposed) {
+					resolve(compileShader(compileToShader(node)));
+				}
+			})
+		);
 		let compiledShader;
-		compiledShaderPromise.then((compiledShader_) => compiledShader = compiledShader_);
+		compiledShaderPromise.then((compiledShader_) => (compiledShader = compiledShader_));
 		function draw(time, posX, posY, sizeX, sizeY, posXInner, posYInner, sizeXInner, sizeYInner) {
-			function setTime(gl, shaderProgram){
+			function setTime(gl, shaderProgram) {
 				gl.uniform1f(gl.getUniformLocation(shaderProgram, 'time'), time);
 			}
-			if(compiledShader) {
+			if (compiledShader) {
 				compiledShader.draw(setTime, posX, posY, sizeX, sizeY, posXInner, posYInner, sizeXInner, sizeYInner);
 			}
 		}
@@ -98,7 +104,7 @@ function nodeShaderCompiler(compileShader) {
 			dispose: () => {
 				compiledShaderPromise.then((compiledShader) => compiledShader.dispose());
 				disposed = true;
-			}
+			},
 		};
-	}
+	};
 }

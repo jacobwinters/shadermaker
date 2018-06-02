@@ -1,7 +1,7 @@
 'use strict';
 
-function generateNode(maxDepth, type='texture') {
-	if(Math.random() * (maxDepth + 1) < 1) {
+function generateNode(maxDepth, type = 'texture') {
+	if (Math.random() * (maxDepth + 1) < 1) {
 		return generateLeaf(type);
 	} else {
 		return generateNodeOfType(maxDepth, type, randomKeyFromObject(nodeTypes[type]));
@@ -9,21 +9,21 @@ function generateNode(maxDepth, type='texture') {
 }
 
 const depthPenalty = {
-	number: .125,
-	angle: .125,
-	point: .125,
-	color: .125,
-	transform: .25,
-	texture: 2
+	number: 0.125,
+	angle: 0.125,
+	point: 0.125,
+	color: 0.125,
+	transform: 0.25,
+	texture: 2,
 };
 
 function generateNodeOfType(maxDepth, nodeKind, nodeType) {
-	const params = nodeTypes[nodeKind][nodeType].params.map(each => generateNode(maxDepth - depthPenalty[each], each));
+	const params = nodeTypes[nodeKind][nodeType].params.map((each) => generateNode(maxDepth - depthPenalty[each], each));
 	return [nodeType].concat(params);
 }
 
 function generateLeaf(type) {
-	switch(type){
+	switch (type) {
 		case 'number':
 			return Math.random();
 		case 'angle':

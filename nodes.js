@@ -4,79 +4,79 @@ const nodeKinds = {
 	// number (usually time) -> point
 	point: {
 		returnType: "vec2",
-		parameters: "float position"
+		parameters: "float position",
 	},
 	// number (usually time, but not always) -> number in [0, 1]
 	number: {
 		returnType: "float",
-		parameters: "float position"
+		parameters: "float position",
 	},
 	// number (usually time, but not always) -> radians
 	angle: {
 		returnType: "float",
-		parameters: "float position"
+		parameters: "float position",
 	},
 	// number (usually time) -> color
 	color: {
 		returnType: "vec3",
-		parameters: "float position"
+		parameters: "float position",
 	},
 	// time and point -> color
 	texture: {
 		returnType: "vec3",
-		parameters: "vec3 position"
+		parameters: "vec3 position",
 	},
 	// time and point -> point
 	transform: {
 		returnType: "vec3",
-		parameters: "vec3 position"
-	}
+		parameters: "vec3 position",
+	},
 }
 
 const nodeTypes = {
 	transform: {
 		"identity": {
 			params: [],
-			code: ["return position;"]
+			code: ["return position;"],
 		},
 		"skew": {
 			params: ["point"],
 			code: ["mat2 transform = mat2(1., `1(position.z), 1.);",
 				"return vec3(transform * position.xy, position.z);"
-			]
+			],
 		},
 		"rotate": {
 			params: ["angle"],
 			code: ["float angle = `1(position.z);",
 				"mat2 transform = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));",
 				"return vec3(transform * position.xy, position.z);"
-			]
+			],
 		},
 		"scale": {
 			params: ["point"],
-			code: ["return vec3(position.xy * `1(position.z), position.z);"]
+			code: ["return vec3(position.xy * `1(position.z), position.z);"],
 		},
 		"invert": {
 			params: [],
 			code: ["float len = length(position.xy);",
 				"return vec3(position.xy / (len*len), position.z);"
-			]
+			],
 		},
 		"translate": {
 			params: ["point"],
-			code: ["return vec3(position.xy + `1(position.z), position.z);"]
+			code: ["return vec3(position.xy + `1(position.z), position.z);"],
 		},
 		"swirl": {
 			params: ["angle"],
 			code: ["float angle = `1(length(position.xy));",
 				"mat2 transform = mat2(cos(angle), -sin(angle), sin(angle), cos(angle));",
 				"return vec3(transform * position.xy, position.z);"
-			]
+			],
 		},
 		// Math taken from http://flam3.com/flame_draves.pdf (a good source of interesting transforms)
 		"sphere": {
 			params: [],
-			code: ["return vec3(position.xy * (length(position.xy) + 1.) / 2., position.z);"]
+			code: ["return vec3(position.xy * (length(position.xy) + 1.) / 2., position.z);"],
 		},
 		// This function's output is as far from the center, by Euclidean distance, as the input was from the center in Manhattan distance
 		// This sympy code verifies that it is correct:
@@ -90,7 +90,7 @@ const nodeTypes = {
 		// simplify(Eq(p2.distance(Point(0, 0)), manhattanDistance(p, Point(0, 0))))
 		"manhattan": {
 			params: [],
-			code: ["return vec3(normalize(position.xy) * (abs(position.x) + abs(position.y)), position.z);"]
+			code: ["return vec3(normalize(position.xy) * (abs(position.x) + abs(position.y)), position.z);"],
 		},
 		// Parameters: angle of wave, wave, phase of wave
 		"waves": {
@@ -102,7 +102,7 @@ const nodeTypes = {
 				"float offset = `2(waveOffset);",
 				"vec2 orthogonalUnitVector = vec2(-sin(angle), cos(angle));",
 				"return vec3(position.xy + orthogonalUnitVector * offset, position.z);"
-			]
+			],
 		},
 		"waves-scale": {
 			params: ["angle", "number", "angle"],
@@ -113,18 +113,18 @@ const nodeTypes = {
 				"float offset = `2(waveOffset);",
 				"vec2 vectorInDirection = unitVectorInDirection * waveOffsetFromPosition;",
 				"return vec3(vectorInDirection + (position.xy - vectorInDirection) * offset, position.z);"
-			]
+			],
 		},
 		"compose": {
 			params: ["transform", "transform"],
-			code: ["return `2(`1(position));"]
+			code: ["return `2(`1(position));"],
 		},
 		"elliptic": {
 			params: [],
 			code: ["float x = cosh(position.x) * cos(position.y);",
 				"float y = sinh(position.x) * sin(position.y);",
 				"return vec3(x, y, position.z);"
-			]
+			],
 		},
 		"bipolar": {
 			params: [],
@@ -132,22 +132,22 @@ const nodeTypes = {
 				"float x = sinh(position.x) / denominator;",
 				"float y = sin(position.y) / denominator;",
 				"return vec3(x, y, position.z);"
-			]
+			],
 		},
 		// Math taken from http://flam3.com/flame_draves.pdf (a good source of interesting transforms)
 		"sphere-inverse": {
 			params: [],
-			code: ["return vec3(position.xy * 2. / (length(position.xy) + 1.), position.z);"]
-		}
+			code: ["return vec3(position.xy * 2. / (length(position.xy) + 1.), position.z);"],
+		},
 	},
 	texture: {
 		"solid": {
 			params: ["color"],
-			code: ["return `1(position.z);"]
+			code: ["return `1(position.z);"],
 		},
 		"transform": {
 			params: ["texture", "transform"],
-			code: ["return `1(`2(position));"]
+			code: ["return `1(`2(position));"],
 		},
 		"checkerboard": {
 			params: ["texture", "texture", "transform"],
@@ -157,7 +157,7 @@ const nodeTypes = {
 				"} else {",
 				"  return `2(position);",
 				"}"
-			]
+			],
 		},
 		// Parameters: texture1, texture2, angle of wave, wave, phase of wave, transform used when testing point
 		"gradient": {
@@ -169,28 +169,28 @@ const nodeTypes = {
 				"float waveOffset = waveOffsetFromPosition + transformedPoint.z;",
 				"float blend = `4(waveOffset);",
 				"return colormix(`1(position), `2(position), blend);"
-			]
+			],
 		},
 		"hue-substitute": {
 			params: ["texture", "texture"],
 			code: ["float hue = `1(position).x;",
 				"vec3 rest = `2(position);",
 				"return vec3(hue, rest.yz);"
-			]
+			],
 		},
 		"saturation-substitute": {
 			params: ["texture", "texture"],
 			code: ["float saturation = `1(position).y;",
 				"vec3 rest = `2(position);",
 				"return vec3(rest.x, saturation, rest.z);"
-			]
+			],
 		},
 		"lightness-substitute": {
 			params: ["texture", "texture"],
 			code: ["float lightness = `1(position).z;",
 				"vec3 rest = `2(position);",
 				"return vec3(rest.xy, lightness);"
-			]
+			],
 		},
 		"voronoi": {
 			params: ["transform", "point", "point", "point", "point", "texture", "texture", "texture", "texture"],
@@ -213,14 +213,14 @@ const nodeTypes = {
 				"} else {",
 				"	return `9(position);",
 				"}"
-			]
-		}
+			],
+		},
 	},
 	color: {
 		"from-components": {
 			params: ["angle", "number", "number"],
-			code: ["return vec3(`1(position), `2(position), `3(position));"]
-		}
+			code: ["return vec3(`1(position), `2(position), `3(position));"],
+		},
 	},
 	point: {
 		"cartesian": {
@@ -228,50 +228,50 @@ const nodeTypes = {
 			code: ["float x = `1(position);",
 				"float y = `2(position);",
 				"return vec2(x, y);"
-			]
+			],
 		},
 		"polar": {
 			params: ["angle", "number"],
 			code: ["float t = `1(position);",
 				"float r = `2(position);",
 				"return r * vec2(cos(t), sin(t));"
-			]
+			],
 		},
 		"transform": {
 			params: ["point", "transform"],
-			code: ["return `2(vec3(`1(position), position)).xy;"]
-		}
+			code: ["return `2(vec3(`1(position), position)).xy;"],
+		},
 	},
 	number: {
 		"sine": {
 			params: [],
-			code: ["return sin(position) * .5 + .5;"]
+			code: ["return sin(position) * .5 + .5;"],
 		},
 		"triangle": {
 			params: [],
-			code: ["return abs(mod(position / PI, 2.) - 1.);"]
+			code: ["return abs(mod(position / PI, 2.) - 1.);"],
 		},
 		"average": {
 			params: ["number", "number"],
-			code: ["return (`1(position) + `2(position)) / 2.;"]
+			code: ["return (`1(position) + `2(position)) / 2.;"],
 		},
 		"change-phase": {
 			params: ["number", "number" /* Constant */ ],
-			code: ["return `1(position + `2(0.));"]
+			code: ["return `1(position + `2(0.));"],
 		},
 		"change-frequency": {
 			params: ["number", "number" /* Constant */ ],
-			code: ["return `1(position * `2(0.) * 2.); // Without the * 2 this could only decrease frequency because `2() is in [0, 1]"]
-		}
+			code: ["return `1(position * `2(0.) * 2.); // Without the * 2 this could only decrease frequency because `2() is in [0, 1]"],
+		},
 	},
 	angle: {
 		"from-number": {
 			params: ["number", "number" /* Constant */ ],
-			code: ["return (`1(position) + `2(0.)) * 2. * PI;"]
+			code: ["return (`1(position) + `2(0.)) * 2. * PI;"],
 		},
 		"constant-forward": {
 			params: ["angle", "number" /* Constant */ ],
-			code: ["return `1(position) + position * `2(0.);"]
-		}
-	}
+			code: ["return `1(position) + position * `2(0.);"],
+		},
+	},
 }

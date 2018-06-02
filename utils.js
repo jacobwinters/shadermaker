@@ -12,6 +12,6 @@ function randomKeyFromObject(obj) {
 	return randomFromArray(Object.keys(obj));
 }
 
-function clamp(x, min, max){
+function clamp(x, min, max) {
 	return Math.min(Math.max(x, min), max);
 }
