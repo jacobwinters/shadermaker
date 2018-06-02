@@ -1,22 +1,21 @@
 "use strict";
 
 function compile(node, type='texture', counter = makeCounter()){
+	const ourId = counter();
 	if(typeof node === 'number') {
-		const ourId = counter();
-		return [`float node${ourId}(float position){ return ${numberToGlslString(node)}; }`, ourId];
+		return {code: `float node${ourId}(float position){ return ${numberToGlslString(node)}; }`, id: ourId};
 	} else {
 		const nodeType = nodeTypes[type][node[0]];
 		const children = nodeType.params.map((childType, index) => compile(node[index + 1], childType, counter));
-		const ourId = counter();
 
 		const code = `${nodeKinds[type].returnType} node${ourId}(${nodeKinds[type].parameters}) {
 	// ${type} ${node[0]}
 	${nodeType.code.join("\n\t")}
 }`;
 
-		const codeWithChildrenCalls = code.replace(/`([0-9]+)/g, (_, number) => `node${children[Number(number) - 1][1]}`)
-		const codeWithChildren = children.map(x => x[0]).concat([codeWithChildrenCalls]).join('\n');
-		return [codeWithChildren, ourId];
+		const codeWithChildrenCalls = code.replace(/`([0-9]+)/g, (_, number) => `node${children[Number(number) - 1].id}`)
+		const codeWithChildren = children.map(child => child.code).concat([codeWithChildrenCalls]).join('\n');
+		return {code: codeWithChildren, id: ourId};
 	}
 }
 
@@ -33,7 +32,7 @@ function makeCounter() {
 }
 
 function compileToShader(node) {
-	const [body, id] = compile(node);
+	const {code: body, id} = compile(node);
   return `precision mediump float;
 varying vec2 coord;
 uniform float time;
