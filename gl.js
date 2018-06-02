@@ -1,15 +1,23 @@
 "use strict";
 
 function initWebGL(canvas){
-  canvas.width = canvas.clientWidth * devicePixelRatio;
-  canvas.height = canvas.clientHeight * devicePixelRatio;
   const gl = canvas.getContext('webgl');
-  function clear(){
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  var oldWidth, oldHeight, oldResolutionReduction, oldBufferWidth, oldBufferHeight;
+  function startFrame() {
+    if (canvas.clientWidth !== oldWidth || canvas.clientHeight !== oldHeight || settings.resolutionReduction !== oldResolutionReduction || gl.drawingBufferWidth !== oldBufferWidth || gl.drawingBufferHeight !== oldBufferHeight) {
+      canvas.width = canvas.clientWidth * devicePixelRatio / settings.resolutionReduction;
+      canvas.height = canvas.clientHeight * devicePixelRatio / settings.resolutionReduction;
+      oldWidth = canvas.clientWidth;
+      oldHeight = canvas.clientHeight;
+      oldResolutionReduction = settings.resolutionReduction;
+      oldBufferWidth = gl.drawingBufferWidth;
+      oldBufferHeight = gl.drawingBufferHeight;
+      gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    }
   }
   return {
     gl: gl,
-    clear: clear,
+    startFrame: startFrame,
     canvas: canvas
   };
 }

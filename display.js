@@ -2,23 +2,32 @@
 
 function grid(nodes) {
   return (gl, compiler, display) => {
-    $(gl.canvas).click((event) => {
-      const x = event.offsetX / gl.canvas.clientWidth;
-      const y = 1 - (event.offsetY / gl.canvas.clientHeight);
-      display.setDisplay(grid(makeGrid(nodes[Math.floor(x * 5) + Math.floor(y * 5) * 5])));
-    });
-    const shaders = nodes.map(compiler);
+    const clickListener = (event) => {
+      if(settings.operation === 'variations') {
+        const x = event.offsetX / gl.canvas.clientWidth;
+        const y = 1 - (event.offsetY / gl.canvas.clientHeight);
+        display.setDisplay(grid(makeGrid(nodes[Math.floor(y * 5)][Math.floor(x * 5)])));
+      }
+    };
+    gl.canvas.addEventListener('click', clickListener);
+    const shaders = nodes.map((row) => row.map(compiler));
     return {
       draw(time) {
-        for(var i = 0; i < 25; i++) {
-          const posX = ((i % 5) - 2) * 2/5;
-          const posY = Math.floor((i / 5) - 2) * 2/5;
-          const size = 1 / 5;
-          shaders[i].draw(time, posX, posY, size, size, 0, 0, 2, 2);
+        const zoomRadius = Math.exp(-settings.zoom)*2;
+        for (var y = 0; y < 5; y++) {
+          const posY = (y - 2) * 2 / 5;
+          for(var x = 0; x < 5; x++) {
+            const posX = (x - 2) * 2 / 5;
+            const size = 1 / 5;
+            const continuousOffsetX = settings.continuous ? zoomRadius * 2 * (x - 2) : 0;
+            const continuousOffsetY = settings.continuous ? zoomRadius * 2 * (y - 2) : 0;
+            shaders[y][x].draw(time, posX, posY, size, size, settings.center.x + continuousOffsetX, settings.center.y + continuousOffsetY, zoomRadius, zoomRadius);
+          }
         }
       },
       dispose() {
-        shaders.forEach((shader) => shader.dispose());
+        shaders.forEach((row) => row.forEach((shader) => shader.dispose()));
+        gl.canvas.removeEventListener('click', clickListener);
       }
     }
   }
@@ -39,24 +48,40 @@ function justOne(node){
 }
 
 function makeDisplay(canvas) {
+  canvas.addEventListener('wheel', (event) => {
+    if(event.deltaY > 0){
+      settings.zoom += .1;
+    } else if(event.deltaY < 0) {
+      settings.zoom -= .1;
+    }
+    settings.zoom = clamp(settings.zoom, -2, 2);
+  });
+  canvas.addEventListener('mousemove', (event) => {
+    if(settings.operation == 'pan' && (event.buttons & 1)) {
+      const zoomScale = 2 * 5 * Math.exp(-settings.zoom)*2;
+      settings.center.x -= event.movementX * zoomScale / gl.canvas.clientWidth
+      settings.center.y += event.movementY * zoomScale / gl.canvas.clientHeight
+    }
+  });
   const gl = initWebGL(canvas);
   const compiler = nodeShaderCompiler(shaderCompiler(gl.gl));
-  var displayMaker;
   var display;
   var time = 0;
+  var frameNumber = 0;
   var me = {
-    setDisplay(newDisplayMaker) {
+    setDisplay(displayMaker) {
       if(display) {
         display.dispose();
       }
-      displayMaker = newDisplayMaker;
-      $(canvas).off();
       display = displayMaker(gl, compiler, me);
     },
     draw() {
       time += .01;
-      gl.clear();
-      display.draw(time);
+      frameNumber++;
+      if(frameNumber % settings.frameRateReduction === 0) {
+        gl.startFrame();
+        display.draw(time);
+      }
     }
   };
   return me;

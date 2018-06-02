@@ -14,13 +14,13 @@ function fiddle(node, type = 'texture') {
 }
 
 function makeGrid(node) {
-  var shaders = [];
-  for(var i = 0; i < 12; i++) {
-    shaders.push(fiddle(node));
-  }
-  shaders.push(node);
-  for(var i = 0; i < 12; i++) {
-    shaders.push(fiddle(node));
+  const shaders = [];
+  for(var y = 0; y < 5; y++) {
+    const row = [];
+    for(var x = 0; x < 5; x++) {
+      row.push((y == 2 && x == 2) ? node : fiddle(node));
+    }
+    shaders.push(row);
   }
   return shaders;
 }

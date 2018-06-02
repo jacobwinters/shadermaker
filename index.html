@@ -1,11 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta name='viewport' content='width=device-width'>
+	<link rel='stylesheet' href='style.css'>
 </head>
 <body>
-	<p>Click on one of the patterns below:</p>
-	<canvas id='canvas' style='width: 100vmin; height: 100vmin'></canvas>
-	<script src='jquery-3.1.0.js'></script>
+	<div id='controls'>
+		<section>
+			Click on one of the patterns
+		</section>
+		<section>
+			<h1>Operation:</h1>
+			<input type='radio' id='variations' value='variations' v-model='operation'><!--
+			--><label for='variations'>Variations</label><!--
+			--><input type='radio' id='pan' value='pan' v-model='operation'><!--
+			--><label for='pan'>Pan</label>
+		</section>
+		<section>
+			<h1>Appearance:</h1>
+			<p>
+				<label for='continuous'>Continuous</label>
+				<input type='checkbox' id='continuous' v-model='continuous'>
+			</p>
+			<p>
+				<label for='centerX'>Center X:</label>
+				<input type='number' step='any' id='centerX' v-model.number='center.x'>
+			</p>
+			<p>
+				<label for='centerY'>Center Y:</label>
+				<input type='number' step='any' id='centerY' v-model.number='center.y'>
+			</p>
+			<p>
+				<label for='zoom'>Zoom:</label>
+				<input type='range' min='-2' max='2' step='any' id='zoom' v-model.number='zoom'>
+			</p>
+		</section>
+		<section>
+			<h1>Performance:</h1>
+			<p>
+				<label for='frameRateReduction'>Decrease framerate:</label>
+				<input type='range' min='1' max='4' id='frameRateReduction' v-model.number='frameRateReduction'>
+			</p>
+			<p>
+				<label for='resolutionReduction'>Decrease resolution:</label>
+				<input type='range' min='1' max='4' id='resolutionReduction' v-model.number='resolutionReduction'>
+			</p>
+		</section>
+	</div>
+	<canvas id='canvas'></canvas>
+	<script src='vue.js'></script>
 	<script src='utils.js'></script>
 	<script src='nodes.js'></script>
 	<script src='generate.js'></script>
