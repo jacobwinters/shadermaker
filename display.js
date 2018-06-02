@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 function grid(nodes) {
 	return (gl, compiler, display) => {

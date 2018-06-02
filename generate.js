@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 function generateNode(maxDepth, type='texture') {
 	if(Math.random() * (maxDepth + 1) < 1) {

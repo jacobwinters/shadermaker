@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 function initWebGL(canvas){
 	const gl = canvas.getContext('webgl');

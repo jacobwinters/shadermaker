@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 function fiddle(node, type = 'texture') {
 	const nodeType = nodeTypes[type][node[0]];

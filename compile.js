@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 function compile(node, type='texture', counter = makeCounter()){
 	const ourId = counter();
@@ -10,7 +10,7 @@ function compile(node, type='texture', counter = makeCounter()){
 
 		const code = `${nodeKinds[type].returnType} node${ourId}(${nodeKinds[type].parameters}) {
 	// ${type} ${node[0]}
-	${nodeType.code.join("\n\t")}
+	${nodeType.code.join('\n\t')}
 }`;
 
 		const codeWithChildrenCalls = code.replace(/`([0-9]+)/g, (_, number) => `node${children[Number(number) - 1].id}`)
