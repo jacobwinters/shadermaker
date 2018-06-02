@@ -24,18 +24,19 @@ function initWebGL(canvas){
 
 function shaderCompiler(gl) {
 	const vshader = gl.createShader(gl.VERTEX_SHADER);
-	gl.shaderSource(vshader,
-		'precision highp float;\
-		attribute vec2 position;\
-		uniform vec2 center;\
-		uniform vec2 size;\
-		uniform vec2 innerCenter;\
-		uniform vec2 innerSize;\
-		varying vec2 coord;\
-		void main(void){\
-			gl_Position = vec4(center + size * position, 1., 1.);\
-			coord = innerCenter + innerSize * position;\
-		}');
+	const vshaderSource = `precision highp float;
+attribute vec2 position;
+uniform vec2 center;
+uniform vec2 size;
+uniform vec2 innerCenter;
+uniform vec2 innerSize;
+varying vec2 coord;
+void main(void){
+	gl_Position = vec4(center + size * position, 1., 1.);
+	coord = innerCenter + innerSize * position;
+}`
+	gl.shaderSource(vshader, vshaderSource);
+
 	gl.compileShader(vshader);
 	const positions = new Float32Array(flatten([[1, -1], [-1, -1], [1, 1], [-1, 1]]));
 	const vertexPositionBuffer = gl.createBuffer();
