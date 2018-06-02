@@ -2,7 +2,7 @@
 
 function initWebGL(canvas){
 	const gl = canvas.getContext('webgl');
-	var oldWidth, oldHeight, oldResolutionReduction, oldBufferWidth, oldBufferHeight;
+	let oldWidth, oldHeight, oldResolutionReduction, oldBufferWidth, oldBufferHeight;
 	function startFrame() {
 		if (canvas.clientWidth !== oldWidth || canvas.clientHeight !== oldHeight || settings.resolutionReduction !== oldResolutionReduction || gl.drawingBufferWidth !== oldBufferWidth || gl.drawingBufferHeight !== oldBufferHeight) {
 			canvas.width = canvas.clientWidth * devicePixelRatio / settings.resolutionReduction;
@@ -81,9 +81,9 @@ void main(void){
 
 function nodeShaderCompiler(compileShader) {
 	return function compileNodeShader(node) {
-		var disposed = false;
+		let disposed = false;
 		const compiledShaderPromise = new Promise((resolve) => setTimeout(() => { if(!disposed) { resolve(compileShader(compileToShader(node))) } }));
-		var compiledShader;
+		let compiledShader;
 		compiledShaderPromise.then((compiledShader_) => compiledShader = compiledShader_);
 		function draw(time, posX, posY, sizeX, sizeY, posXInner, posYInner, sizeXInner, sizeYInner) {
 			function setTime(gl, shaderProgram){

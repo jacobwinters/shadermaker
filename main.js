@@ -10,9 +10,9 @@ const settings = {
 }
 const display = makeDisplay(document.getElementById('canvas'));
 const initialShaders = [];
-for(var y = 0; y < 5; y++) {
+for(let y = 0; y < 5; y++) {
 	const row = [];
-	for(var x = 0; x < 5; x++) {
+	for(let x = 0; x < 5; x++) {
 		row.push(generateNode(5));
 	}
 	initialShaders.push(row);

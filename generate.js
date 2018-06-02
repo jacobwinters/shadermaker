@@ -8,7 +8,7 @@ function generateNode(maxDepth, type='texture') {
 	}
 }
 
-var depthPenalty = {
+const depthPenalty = {
 	number: .125,
 	angle: .125,
 	point: .125,

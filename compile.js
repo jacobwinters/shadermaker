@@ -25,7 +25,7 @@ function numberToGlslString(x) {
 }
 
 function makeCounter() {
-	var i = 1;
+	let i = 1;
 	return function() {
 		return i++;
 	}

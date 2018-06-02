@@ -14,9 +14,9 @@ function grid(nodes) {
 		return {
 			draw(time) {
 				const zoomRadius = Math.exp(-settings.zoom)*2;
-				for (var y = 0; y < 5; y++) {
+				for (let y = 0; y < 5; y++) {
 					const posY = (y - 2) * 2 / 5;
-					for(var x = 0; x < 5; x++) {
+					for(let x = 0; x < 5; x++) {
 						const posX = (x - 2) * 2 / 5;
 						const size = 1 / 5;
 						const continuousOffsetX = settings.continuous ? zoomRadius * 2 * (x - 2) : 0;
@@ -65,10 +65,10 @@ function makeDisplay(canvas) {
 	});
 	const gl = initWebGL(canvas);
 	const compiler = nodeShaderCompiler(shaderCompiler(gl.gl));
-	var display;
-	var time = 0;
-	var frameNumber = 0;
-	var me = {
+	let display;
+	let time = 0;
+	let frameNumber = 0;
+	const me = {
 		setDisplay(displayMaker) {
 			if(display) {
 				display.dispose();
