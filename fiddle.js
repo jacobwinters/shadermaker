@@ -18,7 +18,7 @@ function makeGrid(node) {
 	for(let y = 0; y < 5; y++) {
 		const row = [];
 		for(let x = 0; x < 5; x++) {
-			row.push((y == 2 && x == 2) ? node : fiddle(node));
+			row.push((y === 2 && x === 2) ? node : fiddle(node));
 		}
 		shaders.push(row);
 	}

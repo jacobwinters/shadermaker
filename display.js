@@ -57,7 +57,7 @@ function makeDisplay(canvas) {
 		settings.zoom = clamp(settings.zoom, -2, 2);
 	});
 	canvas.addEventListener('mousemove', (event) => {
-		if(settings.operation == 'pan' && (event.buttons & 1)) {
+		if(settings.operation === 'pan' && (event.buttons & 1)) {
 			const zoomScale = 2 * 5 * Math.exp(-settings.zoom)*2;
 			settings.center.x -= event.movementX * zoomScale / gl.canvas.clientWidth
 			settings.center.y += event.movementY * zoomScale / gl.canvas.clientHeight
