@@ -8,10 +8,19 @@ function grid(nodes) {
 			return [Math.floor(y * 5), Math.floor(x * 5)];
 		}
 		function clickListener(event) {
+			const [y, x] = eventCoordsToGrid(event);
 			if (settings.operation === 'variations') {
-				const [y, x] = eventCoordsToGrid(event);
 				display.setDisplay(grid(makeGrid(nodes[y][x])));
+			} else if (settings.operation === 'save') {
+				saveFile(nodes[y][x], 'shader', 'shader');
+			} else if (settings.operation === 'open') {
+				openFile('shader', (shader) => setShader(y, x, shader));
 			}
+		}
+		function setShader(y, x, shader) {
+			nodes[y][x] = shader;
+			shaders[y][x].dispose();
+			shaders[y][x] = compiler(shader);
 		}
 		gl.canvas.addEventListener('click', clickListener);
 		const shaders = nodes.map((row) => row.map(compiler));
