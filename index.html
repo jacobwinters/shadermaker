@@ -11,40 +11,20 @@
 		</section>
 		<section>
 			<h1>Operation:</h1>
-			<input type='radio' id='variations' value='variations' v-model='operation'><!--
-			--><label for='variations'>Variations</label><!--
-			--><input type='radio' id='pan' value='pan' v-model='operation'><!--
-			--><label for='pan'>Pan</label>
+			<label><input type='radio' value='variations' v-model='operation'> Variations</label>
+			<label><input type='radio' value='pan' v-model='operation'> Pan</label>
 		</section>
 		<section>
 			<h1>Appearance:</h1>
-			<p>
-				<label for='continuous'>Continuous</label>
-				<input type='checkbox' id='continuous' v-model='continuous'>
-			</p>
-			<p>
-				<label for='centerX'>Center X:</label>
-				<input type='number' step='any' id='centerX' v-model.number='center.x'>
-			</p>
-			<p>
-				<label for='centerY'>Center Y:</label>
-				<input type='number' step='any' id='centerY' v-model.number='center.y'>
-			</p>
-			<p>
-				<label for='zoom'>Zoom:</label>
-				<input type='range' min='-2' max='2' step='any' id='zoom' v-model.number='zoom'>
-			</p>
+			<label>Continuous <input type='checkbox' v-model='continuous'></label>
+			<label>Center X: <input type='number' step='any' v-model.number='center.x'></label>
+			<label>Center Y: <input type='number' step='any' v-model.number='center.y'></label>
+			<label>Zoom: <input type='range' min='-2' max='2' step='any' v-model.number='zoom'></label>
 		</section>
 		<section>
 			<h1>Performance:</h1>
-			<p>
-				<label for='frameRateReduction'>Decrease framerate:</label>
-				<input type='range' min='1' max='4' id='frameRateReduction' v-model.number='frameRateReduction'>
-			</p>
-			<p>
-				<label for='resolutionReduction'>Decrease resolution:</label>
-				<input type='range' min='1' max='4' id='resolutionReduction' v-model.number='resolutionReduction'>
-			</p>
+			<label>Decrease framerate: <input type='range' min='1' max='4' v-model.number='frameRateReduction'></label>
+			<label>Decrease resolution: <input type='range' min='1' max='4' v-model.number='resolutionReduction'></label>
 		</section>
 	</div>
 	<canvas id='canvas'></canvas>

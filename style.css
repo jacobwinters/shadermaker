@@ -26,38 +26,8 @@ section {
 }
 
 label {
-	display: inline-block;
-	width: 10em;
-	text-align: right;
-}
-
-input[type="radio"] {
-	display: none;
-}
-
-input[type="radio"]+label {
-	width: auto;
-	border-width: 1px;
-	border-color: #333;
-	border-style: solid;
-	border-left-style: none;
-	padding: .5em;
-}
-
-input[type="radio"]+label:first-of-type {
-	border-left-style: solid;
-	border-top-left-radius: .25em;
-	border-bottom-left-radius: .25em;
-}
-
-input[type="radio"]+label:last-of-type {
-	border-top-right-radius: .25em;
-	border-bottom-right-radius: .25em;
-}
-
-input[type="radio"]:checked+label {
-	background: #333;
-	color: #eee;
+	display: block;
+	margin: 1em;
 }
 
 input[type="range"] {
