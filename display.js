@@ -2,13 +2,17 @@
 
 function grid(nodes) {
 	return (gl, compiler, display) => {
-		const clickListener = (event) => {
+		function eventCoordsToGrid(event) {
+			const x = event.offsetX / gl.canvas.clientWidth;
+			const y = 1 - event.offsetY / gl.canvas.clientHeight;
+			return [Math.floor(y * 5), Math.floor(x * 5)];
+		}
+		function clickListener(event) {
 			if (settings.operation === 'variations') {
-				const x = event.offsetX / gl.canvas.clientWidth;
-				const y = 1 - event.offsetY / gl.canvas.clientHeight;
-				display.setDisplay(grid(makeGrid(nodes[Math.floor(y * 5)][Math.floor(x * 5)])));
+				const [y, x] = eventCoordsToGrid(event);
+				display.setDisplay(grid(makeGrid(nodes[y][x])));
 			}
-		};
+		}
 		gl.canvas.addEventListener('click', clickListener);
 		const shaders = nodes.map((row) => row.map(compiler));
 		return {
