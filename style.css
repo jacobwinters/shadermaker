@@ -11,7 +11,6 @@ body {
 #controls {
 	flex-grow: 1;
 	flex-shrink: 0;
-	min-width: 20em;
 }
 
 #canvas {
@@ -21,15 +20,6 @@ body {
 	height: 100vmin;
 }
 
-section {
-	margin: 1em;
-}
-
-label {
-	display: block;
-	margin: 1em;
-}
-
-input[type="range"] {
+input[type='range'] {
 	vertical-align: middle;
 }

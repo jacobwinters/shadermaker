@@ -6,28 +6,26 @@
 </head>
 <body>
 	<div id='controls'>
-		<section>
-			Click on one of the patterns
-		</section>
-		<section>
-			<h1>Operation:</h1>
-			<label><input type='radio' value='variations' v-model='operation'> Variations</label>
-			<label><input type='radio' value='pan' v-model='operation'> Pan</label>
-			<label><input type='radio' value='save' v-model='operation'> Save</label>
-			<label><input type='radio' value='open' v-model='operation'> Open</label>
-		</section>
-		<section>
-			<h1>Appearance:</h1>
-			<label>Continuous <input type='checkbox' v-model='continuous'></label>
-			<label>Center X: <input type='number' step='any' v-model.number='center.x'></label>
-			<label>Center Y: <input type='number' step='any' v-model.number='center.y'></label>
-			<label>Zoom: <input type='range' min='-2' max='2' step='any' v-model.number='zoom'></label>
-		</section>
-		<section>
-			<h1>Performance:</h1>
-			<label>Decrease framerate: <input type='range' min='1' max='4' v-model.number='frameRateReduction'></label>
-			<label>Decrease resolution: <input type='range' min='1' max='4' v-model.number='resolutionReduction'></label>
-		</section>
+		<p>Click on one of the patterns</p>
+		<fieldset>
+			<legend>Operation:</legend>
+			<p><label><input type='radio' value='variations' v-model='operation'> Variations</label></p>
+			<p><label><input type='radio' value='pan' v-model='operation'> Pan</label></p>
+			<p><label><input type='radio' value='save' v-model='operation'> Save</label></p>
+			<p><label><input type='radio' value='open' v-model='operation'> Open</label></p>
+		</fieldset>
+		<fieldset>
+			<legend>Appearance:</legend>
+			<p><label>Continuous <input type='checkbox' v-model='continuous'></label></p>
+			<p><label>Center X: <input type='number' step='any' v-model.number='center.x'></label></p>
+			<p><label>Center Y: <input type='number' step='any' v-model.number='center.y'></label></p>
+			<p><label>Zoom: <input type='range' min='-2' max='2' step='any' v-model.number='zoom'></label></p>
+		</fieldset>
+		<fieldset>
+			<legend>Performance:</legend>
+			<p><label>Decrease framerate: <input type='range' min='1' max='4' v-model.number='frameRateReduction'></label></p>
+			<p><label>Decrease resolution: <input type='range' min='1' max='4' v-model.number='resolutionReduction'></label></p>
+		</fieldset>
 	</div>
 	<canvas id='canvas'></canvas>
 	<script src='vue.js'></script>
