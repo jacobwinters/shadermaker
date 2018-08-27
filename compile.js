@@ -61,30 +61,27 @@ float voronoiDistance(vec2 x) {
 ${body}
 void main(void) {
 	vec3 hslcolor = node${id}(vec3(coord, time));
-	float c = (1. - abs(2. * hslcolor.z)) * hslcolor.y;
-	float h = hslcolor.x / (PI / 3.);
-	float x = c * (1. - abs(mod(h, 2.) - 1.));
+	float hue = hslcolor.x;
+	float saturation = hslcolor.y;
+	float lightness = hslcolor.z;
+	float chroma = (1. - abs(2. * lightness - 1.)) * saturation;
+	float hPrime = hue / (PI / 3.);
+	float x = chroma * (1. - abs(mod(hPrime, 2.) - 1.));
 	vec3 color;
-	if(5. <= h){
-		color.r=c;
-		color.b=x;
-	} else if(4. <= h){
-		color.r=x;
-		color.b=c;
-	} else if(3. <= h){
-		color.g=x;
-		color.b=c;
-	} else if(2. <= h){
-		color.g=c;
-		color.b=x;
-	} else if(1. <= h){
-		color.r=x;
-		color.g=c;
+	if(hPrime <= 1.){
+		color = vec3(chroma, x, 0.);
+	} else if(hPrime <= 2.){
+		color = vec3(x, chroma, 0.);
+	} else if(hPrime <= 3.){
+		color = vec3(0., chroma, x);
+	} else if(hPrime <= 4.){
+		color = vec3(0., x, chroma);
+	} else if(hPrime <= 5.){
+		color = vec3(x, 0., chroma);
 	} else {
-		color.r=c;
-		color.g=x;
+		color = vec3(chroma, 0., x);
 	}
-	color += hslcolor.z - c / 2.;
+	color += lightness - chroma / 2.;
 	gl_FragColor = vec4(color, 1.);
 }`;
 }
