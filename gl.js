@@ -1,7 +1,7 @@
 'use strict';
 
 function initWebGL(canvas) {
-	const gl = canvas.getContext('webgl');
+	const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
 	let oldWidth, oldHeight, oldResolutionReduction, oldBufferWidth, oldBufferHeight;
 	function startFrame() {
 		if (canvas.clientWidth !== oldWidth || canvas.clientHeight !== oldHeight || settings.resolutionReduction !== oldResolutionReduction || gl.drawingBufferWidth !== oldBufferWidth || gl.drawingBufferHeight !== oldBufferHeight) {

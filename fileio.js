@@ -9,7 +9,7 @@ function saveFile(object, name, type) {
 	document.body.appendChild(element);
 	element.click();
 	document.body.removeChild(element);
-	URL.revokeObjectURL(url);
+	setTimeout(() => URL.revokeObjectURL(url));
 }
 
 function openFile(type, callback) {
