@@ -25,9 +25,9 @@ function generateNodeOfType(maxDepth, nodeKind, nodeType) {
 function generateLeaf(type) {
 	switch (type) {
 		case 'number':
-			return Math.random();
+			return ~~(Math.random() * 1000) / 1000;
 		case 'angle':
-			return Math.random() * 2 * Math.PI;
+			return ~~(Math.random() * 2 * Math.PI * 1000) / 1000;
 		case 'point':
 			return generateNodeOfType(0, 'point', randomFromArray(['cartesian', 'polar']));
 		case 'color':
