@@ -12,9 +12,9 @@ function grid(nodes) {
 			if (settings.operation === 'variations') {
 				display.setDisplay(grid(makeGrid(nodes[y][x])));
 			} else if (settings.operation === 'save') {
-				saveFile(nodes[y][x], 'shader', 'shader');
+				saveShader(nodes[y][x], shaders[y][x], 200);
 			} else if (settings.operation === 'open') {
-				openFile('shader', (shader) => setShader(y, x, shader));
+				openShader((shader) => setShader(y, x, shader));
 			}
 		}
 		function setShader(y, x, shader) {
