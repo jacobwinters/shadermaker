@@ -15,6 +15,8 @@ function grid(nodes) {
 				saveShader(nodes[y][x], shaders[y][x], 200);
 			} else if (settings.operation === 'open') {
 				openShader((shader) => setShader(y, x, shader));
+			} else if (settings.operation === 'inspect') {
+				alert(JSON.stringify(nodes[y][x], null, '\t'));
 			}
 		}
 		function setShader(y, x, shader) {
