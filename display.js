@@ -48,20 +48,6 @@ function grid(nodes) {
 	};
 }
 
-function justOne(node) {
-	return (gl, compiler, display) => {
-		const compiledShader = compiler(node);
-		return {
-			draw(time) {
-				compiledShader.draw(time, 0, 0, 1, 1, 0, 0, 2, 2);
-			},
-			dispose() {
-				compiledShader.dispose();
-			},
-		};
-	};
-}
-
 function makeDisplay(canvas) {
 	canvas.addEventListener('wheel', (event) => {
 		if (event.deltaY > 0) {
