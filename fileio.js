@@ -5,7 +5,7 @@ function saveShader(node, shader, size) {
 	const dataHeight = Math.max(Math.ceil(string.length / (3 * size)), watermark.length);
 	const data = new Uint8Array(size * (size + dataHeight) * 4);
 
-	shader.renderImageData(size, data);
+	shader.drawInBuffer(size, data, 0, -2, -2, 2, 2);
 
 	store7BitASCIIZInImage(string, size, new Uint8Array(data.buffer, size * size * 4));
 
