@@ -14,35 +14,24 @@ function saveShader(shader, gl, size) {
 	gl.endFrame();
 }
 
-function openShader(callback) {
-	openFile('.shader,.png', (file) => {
-		if (file.name.toLowerCase().endsWith('.shader')) {
-			// Legacy json text format
-			const reader = new FileReader();
-			reader.onload = (_) => callback(JSON.parse(reader.result))
-			reader.readAsText(file);
-		} else {
-			const img = new Image();
-			const url = URL.createObjectURL(file);
-			img.onload = () => {
-				URL.revokeObjectURL(url);
+async function openShader() {
+	return await decodeShaderFile(await openFile('image/png,.shader'));
+}
 
-				const dataHeight = img.height - img.width;
-				const canvas = document.createElement('canvas');
-				canvas.width = img.width;
-				canvas.height = dataHeight;
-				const ctx = canvas.getContext('2d');
-				ctx.drawImage(img, 0, -img.width);
-				const data = ctx.getImageData(0, 0, img.width, dataHeight).data;
-
-				callback(JSON.parse(extract7BitASCIIZFromImage(data)));
-			};
-			img.onerror = () => {
-				URL.revokeObjectURL(url);
-			}
-			img.src = url;
-		}
-	});
+async function decodeShaderFile(blob) {
+	if (blob.type !== 'image/png') {
+		// Legacy json text format
+		return JSON.parse(await blob.text());
+	} else {
+		const bitmap = await createImageBitmap(blob);
+		const dataHeight = bitmap.height - bitmap.width;
+		const canvas = new OffscreenCanvas(bitmap.width, dataHeight);
+		const ctx = canvas.getContext('2d');
+		ctx.drawImage(bitmap, 0, -bitmap.width);
+		bitmap.close();
+		const data = ctx.getImageData(0, 0, canvas.width, dataHeight).data;
+		return JSON.parse(extract7BitASCIIZFromImage(data));
+	}
 }
 
 function saveFile(blob, name) {
@@ -56,17 +45,19 @@ function saveFile(blob, name) {
 	setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function openFile(type, callback) {
-	const element = document.createElement('input');
-	element.type = 'file';
-	element.accept = type;
-	element.addEventListener('change', (event) => {
-		if (element.files.length === 1) {
-			callback(element.files[0]);
-		}
+function openFile(type) {
+	return new Promise((resolve) => {
+		const element = document.createElement('input');
+		element.type = 'file';
+		element.accept = type;
+		element.addEventListener('change', (event) => {
+			if (element.files.length === 1) {
+				resolve(element.files[0]);
+			}
+		});
+		element.click();
+		openFile.referenceToElementThatWeKeepAroundBecauseIfWeDontThisFunctionDoesntWorkInSafari = element;
 	});
-	element.click();
-	openFile.referenceToElementThatWeKeepAroundBecauseIfWeDontThisFunctionDoesntWorkInSafari = element;
 }
 
 const watermark = [

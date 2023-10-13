@@ -13,7 +13,7 @@ function grid(nodes) {
 					} else if (settings.operation === 'save') {
 						saveShader(shaders[y][x], gl, 200);
 					} else if (settings.operation === 'open') {
-						openShader((shader) => setShader(y, x, shader));
+						openShader().then((shader) => setShader(y, x, shader));
 					} else if (settings.operation === 'inspect') {
 						alert(JSON.stringify(nodes[y][x], null, '\t'));
 					}
