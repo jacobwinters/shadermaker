@@ -145,3 +145,18 @@ function test7BitASCIIZEncoding() {
 		if (extract7BitASCIIZFromImage(data) !== testCase) throw testCase;
 	}
 }
+
+function testImageDataCanvasRoundTrip() {
+	const stringIn = 'abc123'.repeat(20);
+	const dataIn = store7BitASCIIZInImage(stringIn, 10);
+	const canvas = new OffscreenCanvas(dataIn.width, dataIn.height);
+	const ctx = canvas.getContext('2d', {alpha: false});
+	ctx.putImageData(dataIn, 0, 0);
+	const dataOut = ctx.getImageData(0, 0, dataIn.width, dataIn.height);
+	const stringOut = extract7BitASCIIZFromImage(dataOut.data);
+	return stringOut === stringIn;
+}
+
+if (!testImageDataCanvasRoundTrip()) {
+	alert(`You won't be able to save or open files because something's interfering with our ability to retrieve data from canvases. (Often this "something" is browser fingerprinting protection; if so, kudos for using that, but if you want file I/O you'll need to give this page an exemption, sorry.)`);
+}
