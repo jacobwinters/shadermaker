@@ -8,7 +8,7 @@ const settings = {
 	zoom: 0,
 	center: {x: 0, y: 0},
 };
-const display = makeDisplay(document.getElementById('canvas'));
+const display = makeDisplay(document.getElementById('grid'));
 const initialShaders = [];
 for (let y = 0; y < 5; y++) {
 	const row = [];

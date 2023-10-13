@@ -1,20 +1,17 @@
 'use strict';
 
-function saveShader(node, shader, size) {
-	const string = JSON.stringify(node);
-	const dataHeight = Math.max(Math.ceil(string.length / (3 * size)), watermark.length);
-	const data = new Uint8Array(size * (size + dataHeight) * 4);
+function saveShader(shader, gl, size) {
+	shader.draw(size, size, 0, -2, -2, 2, 2, (bitmap, px, py) => {
+		const data = store7BitASCIIZInImage(JSON.stringify(shader.node), size);
 
-	shader.drawInBuffer(size, data, 0, -2, -2, 2, 2);
+		const canvas = new OffscreenCanvas(size, size + data.height);
+		const ctx = canvas.getContext('2d', {alpha: false});
+		ctx.drawImage(bitmap, px, py, size, size, 0, 0, size, size);
+		ctx.putImageData(data, 0, size);
 
-	store7BitASCIIZInImage(string, size, new Uint8Array(data.buffer, size * size * 4));
-
-	const canvas = document.createElement('canvas');
-	canvas.width = size;
-	canvas.height = size + dataHeight;
-	canvas.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(data.buffer), size, size + dataHeight), 0, 0);
-
-	canvas.toBlob((blob) => saveFile(blob, 'shader.png'));
+		canvas.convertToBlob().then((blob) => saveFile(blob, 'shader.png'));
+	});
+	gl.endFrame();
 }
 
 function openShader(callback) {
@@ -79,8 +76,9 @@ const watermark = [
 	'@@  @@ @@ @@@ @@@  @ @  @ @ @  @  @@ @  @  @ @@ @@@ @ @ @ @  @  @ @  @@ @@@  @@ @     @ @ @  @@ @ @  @@ @ ',
 ];
 
-function store7BitASCIIZInImage(string, width, imgBuffer) {
-	const height = imgBuffer.length / width;
+function store7BitASCIIZInImage(string, width) {
+	const height = Math.max(Math.ceil(string.length / (3 * width)), watermark.length);
+	const imgBuffer = new Uint8Array(width * height * 4);
 	for (let si = 0, ibi = 0; true; ) {
 		/* R */ if (si === string.length) { break; }  imgBuffer[ibi++] = string.charCodeAt(si++);
 		/* G */ if (si === string.length) { break; }  imgBuffer[ibi++] = string.charCodeAt(si++);
@@ -102,6 +100,7 @@ function store7BitASCIIZInImage(string, width, imgBuffer) {
 			}
 		}
 	}
+	return new ImageData(new Uint8ClampedArray(imgBuffer.buffer), width, height);
 }
 
 function extract7BitASCIIZFromImage(imgBuffer) {
@@ -134,17 +133,15 @@ function test7BitASCIIZEncoding() {
 		'12345',
 		'123456',
 		'1234567',
-
-		// Fill the array exactly
-		'~'.repeat(256 / 4 * 3),
+		'12345678',
+		'123456789',
 
 		// Every valid character
 		String.fromCodePoint(...[...Array(127).keys()].map((i) => i + 1)),
 	];
 
 	for (const testCase of testCases) {
-		const data = new Uint8Array(256);
-		store7BitASCIIZInImage(testCase, 1, data);
+		const data = store7BitASCIIZInImage(testCase, 2).data;
 		if (extract7BitASCIIZFromImage(data) !== testCase) throw testCase;
 	}
 }
